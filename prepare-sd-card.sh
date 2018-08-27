@@ -9,12 +9,11 @@ fi
 
 # TODO unmount sd card first?
 
-wget https://github.com/debian-pi/raspbian-ua-netinst/releases/download/v1.0.9/raspbian-ua-netinst-v1.0.9.img.xz
-xzcat raspbian-ua-netinst-v1.0.9.img.xz > ${1}
+wget -qO- https://github.com/debian-pi/raspbian-ua-netinst/releases/download/v1.0.9/raspbian-ua-netinst-v1.0.9.img.xz | xzcat - > ${1}
 #wget https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v2.2.1/raspberrypi-ua-netinst-v2.2.1.img.xz
 #xzcat raspberrypi-ua-netinst-v2.2.1.img.xz > ${1}
 
-echo "packages=openjdk-8-jre-headless" > /media/mark/7CAE-BF6A/installer-config.txt
+#echo "packages=openjdk-8-jre-headless" > /media/mark/7CAE-BF6A/installer-config.txt
 #echo "packages=openjdk-8-jre-headless" > /media/mark/7CAE-BF6A/raspberrypi-ua-netinst/config/installer-config.txt
 
 #mkdir -p /media/mark/7CAE-BF6A/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/
