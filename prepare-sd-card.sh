@@ -37,6 +37,6 @@ wget -qO- https://github.com/debian-pi/raspbian-ua-netinst/releases/download/v1.
 #
 #cat > /media/mark/7CAE-BF6A/raspberrypi-ua-netinst/config/post-install.txt <<- EOM
 #ln -s /lib/systemd/system/loxone-harmony-integration.service /etc/systemd/system/loxone-harmony-integration.service
-#sysctl enable loxone-harmony-integration
-#sysctl start loxone-harmony-integration
+#systemctl enable loxone-harmony-integration
+#systemctl start loxone-harmony-integration
 #EOM
