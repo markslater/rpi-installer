@@ -10,18 +10,20 @@ fi
 # TODO unmount sd card first?
 
 #wget -qO- https://github.com/debian-pi/raspbian-ua-netinst/releases/download/v1.0.9/raspbian-ua-netinst-v1.0.9.img.xz | xzcat - > ${1}
-wget -qO- https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v1.5.2/raspberrypi-ua-netinst-v1.5.2.img.xz | xzcat - > ${1}
+#wget -qO- https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v1.5.2/raspberrypi-ua-netinst-v1.5.2.img.xz | xzcat - > ${1}
 #wget https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v2.2.1/raspberrypi-ua-netinst-v2.2.1.img.xz
 #xzcat raspberrypi-ua-netinst-v2.2.1.img.xz > ${1}
 
-#echo "packages=openjdk-8-jre-headless" > /media/mark/7CAE-BF6A/installer-config.txt
-#echo "packages=openjdk-8-jre-headless" > /media/mark/7CAE-BF6A/raspberrypi-ua-netinst/config/installer-config.txt
+#mount -t vfat /dev/mmcblk0 /tmp/mmc0
 
-#mkdir -p /media/mark/7CAE-BF6A/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/
-#cp "${2}" /media/mark/7CAE-BF6A/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/
+#echo "packages=openjdk-8-jre-headless" > /media/mark/74F9-234A/installer-config.txt
+echo "packages=openjdk-8-jre-headless" > /media/mark/74F9-234A/raspberrypi-ua-netinst/config/installer-config.txt
 #
-#mkdir -p /media/mark/7CAE-BF6A/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/
-#cat > /media/mark/7CAE-BF6A/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/loxone-harmony-integration.service <<- EOM
+#mkdir -p /media/mark/74F9-234A/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/
+#cp "${2}" /media/mark/74F9-234A/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/
+#
+#mkdir -p /media/mark/74F9-234A/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/
+#cat > /media/mark/74F9-234A/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/loxone-harmony-integration.service <<- EOM
 #[Unit]
 #Description=Loxone/Harmony Hub integration service
 #After=network-online.target
@@ -36,7 +38,7 @@ wget -qO- https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v1
 #WantedBy=multi-user.target
 #EOM
 #
-#cat > /media/mark/7CAE-BF6A/raspberrypi-ua-netinst/config/post-install.txt <<- EOM
+#cat > /media/mark/74F9-234A/raspberrypi-ua-netinst/config/post-install.txt <<- EOM
 #ln -s /lib/systemd/system/loxone-harmony-integration.service /etc/systemd/system/loxone-harmony-integration.service
 #systemctl enable loxone-harmony-integration
 #systemctl start loxone-harmony-integration
