@@ -8,7 +8,6 @@ if [[ $# -ne 2 ]]
 fi
 
 JAR_NAME=`basename $2`
-echo "${JAR_NAME}"
 
 # TODO unmount sd card first?
 
