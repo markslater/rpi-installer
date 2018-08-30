@@ -37,7 +37,6 @@ SyslogIdentifier=LoxoneHarmony
 ExecStart=/usr/bin/java -jar /opt/loxone-harmony-integration/loxone-harmony-integration-all.jar
 SuccessExitStatus=143
 
-
 [Install]
 WantedBy=multi-user.target
 EOM
