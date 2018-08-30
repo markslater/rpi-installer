@@ -15,7 +15,13 @@ MOUNT_POINT=`mktemp --directory`
 
 mount -t vfat /dev/mmcblk0p1 "${MOUNT_POINT}"
 
-echo "packages=openjdk-8-jre-headless" > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/installer-config.txt"
+# TODO allegedly, packages should be enclosed in quotes.
+cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/installer-config.txt" <<- EOM
+packages=openjdk-8-jre-headless
+
+bootsize=+256M
+EOM
+
 
 #mkdir -p /media/mark/74F9-234A/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/
 #cp "${2}" /media/mark/74F9-234A/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/
