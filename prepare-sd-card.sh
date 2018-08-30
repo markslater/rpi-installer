@@ -21,7 +21,7 @@ mount -t vfat /dev/mmcblk0p1 "${MOUNT_POINT}"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/installer-config.txt" <<- EOM
 packages=openjdk-8-jre-headless
 
-bootsize=+256M
+bootsize=+64M
 EOM
 
 
