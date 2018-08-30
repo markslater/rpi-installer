@@ -7,6 +7,9 @@ if [[ $# -ne 2 ]]
         exit 1
 fi
 
+JAR_NAME=`basename $2`
+echo "${JAR_NAME}"
+
 # TODO unmount sd card first?
 
 wget -qO- https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v1.5.2/raspberrypi-ua-netinst-v1.5.2.img.xz | xzcat - > ${1}
@@ -23,9 +26,9 @@ bootsize=+256M
 EOM
 
 
-#mkdir -p /media/mark/74F9-234A/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/
-#cp "${2}" /media/mark/74F9-234A/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/
-#
+mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
+cp "${2}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
+
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/loxone-harmony-integration.service" <<- EOM
 [Unit]
@@ -34,7 +37,7 @@ After=network-online.target
 
 [Service]
 SyslogIdentifier=LoxoneHarmony
-ExecStart=/usr/bin/java -jar /opt/loxone-harmony-integration/loxone-harmony-integration-all.jar
+ExecStart=/usr/bin/java -jar /opt/loxone-harmony-integration/${JAR_NAME}
 SuccessExitStatus=143
 
 [Install]
@@ -42,14 +45,15 @@ WantedBy=multi-user.target
 EOM
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
+root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
 root:root 644 /lib/systemd/system/loxone-harmony-integration.service
 EOM
 
-cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
+#cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
 #ln -s /lib/systemd/system/loxone-harmony-integration.service /etc/systemd/system/loxone-harmony-integration.service
-systemctl enable loxone-harmony-integration
-systemctl start loxone-harmony-integration
-EOM
+#systemctl enable loxone-harmony-integration
+#systemctl start loxone-harmony-integration
+#EOM
 
 umount "${MOUNT_POINT}"
 rmdir "${MOUNT_POINT}"
