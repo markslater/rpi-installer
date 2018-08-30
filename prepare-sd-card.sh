@@ -26,21 +26,25 @@ EOM
 #mkdir -p /media/mark/74F9-234A/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/
 #cp "${2}" /media/mark/74F9-234A/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/
 #
-#mkdir -p /media/mark/74F9-234A/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/
-#cat > /media/mark/74F9-234A/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/loxone-harmony-integration.service <<- EOM
-#[Unit]
-#Description=Loxone/Harmony Hub integration service
-#After=network-online.target
-#
-#[Service]
-#SyslogIdentifier=LoxoneHarmony
-#ExecStart=/usr/bin/java -jar /opt/loxone-harmony-integration/loxone-harmony-integration-all.jar
-#SuccessExitStatus=143
-#
-#
-#[Install]
-#WantedBy=multi-user.target
-#EOM
+mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/"
+cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/loxone-harmony-integration.service" <<- EOM
+[Unit]
+Description=Loxone/Harmony Hub integration service
+After=network-online.target
+
+[Service]
+SyslogIdentifier=LoxoneHarmony
+ExecStart=/usr/bin/java -jar /opt/loxone-harmony-integration/loxone-harmony-integration-all.jar
+SuccessExitStatus=143
+
+
+[Install]
+WantedBy=multi-user.target
+EOM
+
+cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
+root:root 644 /lib/systemd/system/loxone-harmony-integration.service
+EOM
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
 #ln -s /lib/systemd/system/loxone-harmony-integration.service /etc/systemd/system/loxone-harmony-integration.service
