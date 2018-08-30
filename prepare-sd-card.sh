@@ -25,8 +25,8 @@ bootsize=+256M
 EOM
 
 
-mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
-cp "${2}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
+#mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
+#cp "${2}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
 
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/loxone-harmony-integration.service" <<- EOM
@@ -43,16 +43,19 @@ SuccessExitStatus=143
 WantedBy=multi-user.target
 EOM
 
+#cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
+#root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
+#root:root 644 /lib/systemd/system/loxone-harmony-integration.service
+#EOM
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
-root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
 root:root 644 /lib/systemd/system/loxone-harmony-integration.service
 EOM
 
-#cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
-#ln -s /lib/systemd/system/loxone-harmony-integration.service /etc/systemd/system/loxone-harmony-integration.service
-#systemctl enable loxone-harmony-integration
-#systemctl start loxone-harmony-integration
-#EOM
+cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
+ln -s /lib/systemd/system/loxone-harmony-integration.service /etc/systemd/system/loxone-harmony-integration.service
+systemctl enable loxone-harmony-integration
+systemctl start loxone-harmony-integration
+EOM
 
 umount "${MOUNT_POINT}"
 rmdir "${MOUNT_POINT}"
