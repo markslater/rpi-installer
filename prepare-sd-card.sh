@@ -20,13 +20,11 @@ mount -t vfat /dev/mmcblk0p1 "${MOUNT_POINT}"
 # TODO allegedly, packages should be enclosed in quotes.
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/installer-config.txt" <<- EOM
 packages=openjdk-8-jre-headless
-
-bootsize=+64M
 EOM
 
 
-#mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
-#cp "${2}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
+mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
+cp "${2}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
 
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/loxone-harmony-integration.service" <<- EOM
@@ -43,11 +41,8 @@ SuccessExitStatus=143
 WantedBy=multi-user.target
 EOM
 
-#cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
-#root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
-#root:root 644 /lib/systemd/system/loxone-harmony-integration.service
-#EOM
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
+root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
 root:root 644 /lib/systemd/system/loxone-harmony-integration.service
 EOM
 
