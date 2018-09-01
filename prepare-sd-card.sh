@@ -11,15 +11,24 @@ JAR_NAME=`basename $2`
 
 # TODO unmount sd card first?
 
-wget -qO- https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v2.2.1/raspberrypi-ua-netinst-v2.2.1.img.xz | xzcat - > ${1}
+wget -qO- https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v1.5.2/raspberrypi-ua-netinst-v1.5.2.img.xz | xzcat - > ${1}
 
 MOUNT_POINT=`mktemp --directory`
 
 mount -t vfat /dev/mmcblk0p1 "${MOUNT_POINT}"
 
-# TODO allegedly, packages should be enclosed in quotes.
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/installer-config.txt" <<- EOM
-packages=openjdk-8-jre-headless
+packages="openjdk-8-jre-headless"
+
+username=pi
+password=raspberry
+
+hostname=pi
+
+timezone=Europe/London
+keyboard_layout=gb
+locales="en_GB.UTF-8"
+system_default_locale="en_GB.UTF-8"
 EOM
 
 
