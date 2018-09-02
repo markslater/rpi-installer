@@ -60,11 +60,10 @@ EOM
 #EOM
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
-adduser --system --no-create-home systemd-loxone
+chroot /rootfs adduser --system --no-create-home systemd-loxone
 mkdir -p /etc/systemd/system/
 ln -s /lib/systemd/system/loxone-harmony-integration.service /etc/systemd/system/loxone-harmony-integration.service
-/bin/systemctl enable loxone-harmony-integration
-/bin/systemctl start loxone-harmony-integration
+chroot /rootfs systemctl enable loxone-harmony-integration
 EOM
 
 umount "${MOUNT_POINT}"
