@@ -40,9 +40,9 @@ cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/syste
 [Unit]
 Description=Loxone/Harmony Hub integration service
 After=network-online.target
-User=systemd-loxone
 
 [Service]
+User=systemd-loxone
 SyslogIdentifier=LoxoneHarmony
 ExecStart=/usr/bin/java -jar /opt/loxone-harmony-integration/${JAR_NAME}
 SuccessExitStatus=143
