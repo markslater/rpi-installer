@@ -25,6 +25,8 @@ userpw=raspberry
 
 hostname=pi
 
+gpu_mem=16
+
 timezone=Europe/London
 keyboard_layout=gb
 locales="en_GB.UTF-8"
