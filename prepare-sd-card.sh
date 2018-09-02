@@ -21,7 +21,7 @@ cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/installer-config.txt" <<- EO
 packages="openjdk-8-jre-headless"
 
 username=pi
-password=raspberry
+userpw=raspberry
 
 hostname=pi
 
@@ -40,6 +40,7 @@ cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/syste
 [Unit]
 Description=Loxone/Harmony Hub integration service
 After=network-online.target
+User=systemd-loxone
 
 [Service]
 SyslogIdentifier=LoxoneHarmony
@@ -59,6 +60,7 @@ EOM
 #EOM
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
+adduser --system --no-create-home systemd-loxone
 mkdir -p /etc/systemd/system/
 ln -s /lib/systemd/system/loxone-harmony-integration.service /etc/systemd/system/loxone-harmony-integration.service
 /bin/systemctl enable loxone-harmony-integration
