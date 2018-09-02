@@ -34,8 +34,8 @@ system_default_locale="en_GB.UTF-8"
 EOM
 
 
-#mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
-#cp "${2}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
+mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
+cp "${2}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
 
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/loxone-harmony-integration.service" <<- EOM
@@ -54,12 +54,9 @@ WantedBy=multi-user.target
 EOM
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
+root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
 root:root 644 /lib/systemd/system/loxone-harmony-integration.service
 EOM
-#cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
-#root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
-#root:root 644 /lib/systemd/system/loxone-harmony-integration.service
-#EOM
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
 chroot /rootfs adduser --system --no-create-home systemd-loxone
