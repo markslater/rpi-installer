@@ -11,7 +11,7 @@ JAR_NAME=`basename $2`
 
 # TODO unmount sd card first?
 
-wget -qO- https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v1.5.2/raspberrypi-ua-netinst-v1.5.2.img.xz | xzcat - > ${1}
+wget -qO- https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v2.1.0/raspberrypi-ua-netinst-v2.1.0.img.xz | xzcat - > ${1}
 
 MOUNT_POINT=`mktemp --directory`
 
