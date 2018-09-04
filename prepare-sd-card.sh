@@ -18,10 +18,11 @@ MOUNT_POINT=`mktemp --directory`
 mount -t vfat /dev/mmcblk0p1 "${MOUNT_POINT}"
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/installer-config.txt" <<- EOM
-packages="openjdk-8-jre-headless"
+packages="openjdk-9-jre"
 
 username=pi
 userpw=raspberry
+usersysgroups="systemd-journal"
 
 hostname=pi
 
