@@ -22,9 +22,10 @@ cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/installer-config.txt" <<- EO
 packages="openjdk-8-jre"
 
 username=pi
-userpw=raspberry
 usersysgroups="systemd-journal"
 user_ssh_pubkey="${PUBLIC_KEY}"
+root_ssh_pwlogin=0
+ssh_pwlogin=0
 
 hostname=pi
 
