@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
 
-if [[ $# -ne 2 ]]
+if [[ $# -ne 3 ]]
     then
-        echo "Usage ${0} sdCard path-to-loxone-harmony-integration.jar"
-        echo "e.g. ${0} /dev/mmcblk0 ./loxone-harmony-integration-all.jar"
+        echo "Usage ${0} sdCard path-to-loxone-harmony-integration.jar path-to-ssh-public-key"
+        echo "e.g. ${0} /dev/mmcblk0 ./loxone-harmony-integration-all.jar ~alice/.ssh/id_rsa.pub"
         exit 1
 fi
 
-JAR_NAME=`basename $2`
+JAR_NAME=`basename "${2}"`
+PUBLIC_KEY=`cat "${3}"`
 
 # TODO unmount sd card first?
 
@@ -23,6 +24,7 @@ packages="openjdk-8-jre"
 username=pi
 userpw=raspberry
 usersysgroups="systemd-journal"
+user_ssh_pubkey="${PUBLIC_KEY}"
 
 hostname=pi
 
@@ -31,7 +33,6 @@ keyboard_layout=gb
 locales="en_GB.UTF-8"
 system_default_locale="en_GB.UTF-8"
 EOM
-
 
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
 cp "${2}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
