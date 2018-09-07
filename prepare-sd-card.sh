@@ -19,7 +19,7 @@ MOUNT_POINT=`mktemp --directory`
 mount -t vfat /dev/mmcblk0p1 "${MOUNT_POINT}"
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/installer-config.txt" <<- EOM
-packages="openjdk-8-jre"
+packages="openjdk-8-jre,openvpn"
 
 username=pi
 usersysgroups="systemd-journal"
@@ -54,9 +54,68 @@ SuccessExitStatus=143
 WantedBy=multi-user.target
 EOM
 
+cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/tmp/v4rules" <<- EOM
+*filter
+-A INPUT -i lo -j ACCEPT
+-A INPUT ! -i lo -s 127.0.0.0/8 -j REJECT
+-A OUTPUT -o lo -j ACCEPT
+
+-A INPUT -p icmp -m state --state NEW --icmp-type 8 -j ACCEPT
+-A INPUT -p icmp -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A OUTPUT -p icmp -j ACCEPT
+
+-A INPUT -i eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 22 -j ACCEPT
+-A OUTPUT -o eth0 -p tcp -m state --state ESTABLISHED --sport 22 -j ACCEPT
+
+-A INPUT -i eth0 -p udp -m state --state NEW,ESTABLISHED --dport 1194 -j ACCEPT
+-A OUTPUT -o eth0 -p udp -m state --state ESTABLISHED --sport 1194 -j ACCEPT
+
+-A INPUT -i eth0 -p udp -m state --state ESTABLISHED --sport 53 -j ACCEPT
+-A OUTPUT -o eth0 -p udp -m state --state NEW,ESTABLISHED --dport 53 -j ACCEPT
+-A INPUT -i eth0 -p tcp -m state --state ESTABLISHED --sport 53 -j ACCEPT
+-A OUTPUT -o eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 53 -j ACCEPT
+
+-A INPUT -i eth0 -p tcp -m state --state ESTABLISHED --sport 80 -j ACCEPT
+-A INPUT -i eth0 -p tcp -m state --state ESTABLISHED --sport 443 -j ACCEPT
+-A OUTPUT -o eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 80 -j ACCEPT
+-A OUTPUT -o eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 443 -j ACCEPT
+
+-A INPUT -i eth0 -p udp -m state --state ESTABLISHED --sport 123 -j ACCEPT
+-A OUTPUT -o eth0 -p udp -m state --state NEW,ESTABLISHED --dport 123 -j ACCEPT
+
+-A INPUT -i tun0 -j ACCEPT
+-A FORWARD -i tun0 -j ACCEPT
+-A OUTPUT -o tun0 -j ACCEPT
+
+-A FORWARD -i tun0 -o eth0 -s 10.8.0.0/24 -j ACCEPT
+-A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+-A INPUT -m limit --limit 3/min -j LOG --log-prefix "iptables_INPUT_denied: " --log-level 4
+-A FORWARD -m limit --limit 3/min -j LOG --log-prefix "iptables_FORWARD_denied: " --log-level 4
+-A OUTPUT -m limit --limit 3/min -j LOG --log-prefix "iptables_OUTPUT_denied: " --log-level 4
+
+-A INPUT -j REJECT
+-A FORWARD -j REJECT
+-A OUTPUT -j REJECT
+
+COMMIT
+EOM
+
+cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/tmp/v6rules" <<- EOM
+*filter
+
+-A INPUT -j REJECT
+-A FORWARD -j REJECT
+-A OUTPUT -j REJECT
+
+COMMIT
+EOM
+
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
 root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
 root:root 644 /lib/systemd/system/loxone-harmony-integration.service
+root:root 400 /tmp/v4rules
+root:root 400 /tmp/v6rules
 EOM
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
@@ -64,6 +123,19 @@ chroot /rootfs adduser --system --no-create-home systemd-loxone
 mkdir -p /etc/systemd/system/
 ln -s /lib/systemd/system/loxone-harmony-integration.service /etc/systemd/system/loxone-harmony-integration.service
 chroot /rootfs systemctl enable loxone-harmony-integration
+
+chroot /rootfs iptables -F && iptables -X
+chroot /rootfs iptables-restore < /tmp/v4rules
+chroot /rootfs ip6tables-restore < /tmp/v6rules
+chroot /rootfs iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+
+chroot /rootfs echo "net.ipv4.ip_forward=1\n" >> /etc/sysctl.d/99-sysctl.conf
+chroot /rootfs echo "net.ipv6.conf.all.disable_ipv6 = 1\n" >> /etc/sysctl.d/99-sysctl.conf
+chroot /rootfs echo "net.ipv6.conf.default.disable_ipv6 = 1\n" >> /etc/sysctl.d/99-sysctl.conf
+chroot /rootfs echo "net.ipv6.conf.lo.disable_ipv6 = 1\n" >> /etc/sysctl.d/99-sysctl.conf
+chroot /rootfs echo "net.ipv6.conf.eth0.disable_ipv6 = 1\n" >> /etc/sysctl.d/99-sysctl.conf
+
+chroot /rootfs sysctl -p
 EOM
 
 umount "${MOUNT_POINT}"
