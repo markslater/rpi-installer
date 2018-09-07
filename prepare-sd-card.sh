@@ -54,6 +54,7 @@ SuccessExitStatus=143
 WantedBy=multi-user.target
 EOM
 
+mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/tmp"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/tmp/v4rules" <<- EOM
 *filter
 -A INPUT -i lo -j ACCEPT
