@@ -137,6 +137,9 @@ chroot /rootfs "echo "net.ipv6.conf.lo.disable_ipv6 = 1\n" >> /etc/sysctl.d/99-s
 chroot /rootfs "echo "net.ipv6.conf.eth0.disable_ipv6 = 1\n" >> /etc/sysctl.d/99-sysctl.conf"
 
 chroot /rootfs sysctl -p
+
+chroot /rootfs adduser --system --no-create-home systemd-openvpn
+
 EOM
 
 umount "${MOUNT_POINT}"
