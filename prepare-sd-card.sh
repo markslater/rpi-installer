@@ -138,11 +138,11 @@ echo "iptables-persistent iptables-persistent/autosave_v4 boolean false" | chroo
 echo "iptables-persistent iptables-persistent/autosave_v6 boolean false" | chroot /rootfs debconf-set-selections
 chroot /rootfs apt-get -y install iptables-persistent
 
-echo "net.ipv4.ip_forward=1\n" >> /rootfs/etc/sysctl.d/99-sysctl.conf
-echo "net.ipv6.conf.all.disable_ipv6 = 1\n" >> /rootfs/etc/sysctl.d/99-sysctl.conf
-echo "net.ipv6.conf.default.disable_ipv6 = 1\n" >> /rootfs/etc/sysctl.d/99-sysctl.conf
-echo "net.ipv6.conf.lo.disable_ipv6 = 1\n" >> /rootfs/etc/sysctl.d/99-sysctl.conf
-echo "net.ipv6.conf.eth0.disable_ipv6 = 1\n" >> /rootfs/etc/sysctl.d/99-sysctl.conf
+echo "net.ipv4.ip_forward=1" >> /rootfs/etc/sysctl.d/99-sysctl.conf
+echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /rootfs/etc/sysctl.d/99-sysctl.conf
+echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /rootfs/etc/sysctl.d/99-sysctl.conf
+echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /rootfs/etc/sysctl.d/99-sysctl.conf
+echo "net.ipv6.conf.eth0.disable_ipv6 = 1" >> /rootfs/etc/sysctl.d/99-sysctl.conf
 
 chroot /rootfs sysctl -p
 
