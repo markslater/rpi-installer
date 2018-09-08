@@ -19,7 +19,7 @@ MOUNT_POINT=`mktemp --directory`
 mount -t vfat /dev/mmcblk0p1 "${MOUNT_POINT}"
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/installer-config.txt" <<- EOM
-packages="openjdk-8-jre,iptables,iptables-persistent,openvpn"
+packages="openjdk-8-jre,iptables,openvpn"
 
 username=pi
 usersysgroups="systemd-journal"
