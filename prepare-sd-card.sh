@@ -56,6 +56,14 @@ EOM
 
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/iptables"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/iptables/rules.v4" <<- EOM
+*nat
+:PREROUTING ACCEPT [4:196]
+:INPUT ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+:POSTROUTING ACCEPT [0:0]
+-A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
+COMMIT
+
 *filter
 -A INPUT -i lo -j ACCEPT
 -A INPUT ! -i lo -s 127.0.0.0/8 -j REJECT
