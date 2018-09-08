@@ -134,8 +134,8 @@ ln -s /lib/systemd/system/loxone-harmony-integration.service /etc/systemd/system
 chroot /rootfs systemctl enable loxone-harmony-integration
 
 chroot /rootfs apt-get -y update
-echo "iptables-persistent iptables-persistent/autosave_v4 boolean true" | chroot /rootfs debconf-set-selections
-echo "iptables-persistent iptables-persistent/autosave_v6 boolean true" | chroot /rootfs debconf-set-selections
+echo "iptables-persistent iptables-persistent/autosave_v4 boolean false" | chroot /rootfs debconf-set-selections
+echo "iptables-persistent iptables-persistent/autosave_v6 boolean false" | chroot /rootfs debconf-set-selections
 chroot /rootfs apt-get -y install iptables-persistent
 
 echo "net.ipv4.ip_forward=1\n" >> /rootfs/etc/sysctl.d/99-sysctl.conf
