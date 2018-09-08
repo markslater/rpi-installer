@@ -19,7 +19,7 @@ MOUNT_POINT=`mktemp --directory`
 mount -t vfat /dev/mmcblk0p1 "${MOUNT_POINT}"
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/installer-config.txt" <<- EOM
-packages="openjdk-8-jre,openvpn"
+packages="openjdk-8-jre,iptables,iptables-persistent,openvpn"
 
 username=pi
 usersysgroups="systemd-journal"
@@ -54,8 +54,8 @@ SuccessExitStatus=143
 WantedBy=multi-user.target
 EOM
 
-mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/tmp"
-cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/tmp/v4rules" <<- EOM
+mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/iptables"
+cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/iptables/rules.v4" <<- EOM
 *filter
 -A INPUT -i lo -j ACCEPT
 -A INPUT ! -i lo -s 127.0.0.0/8 -j REJECT
@@ -102,7 +102,7 @@ cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/tmp/v4rules" <<- 
 COMMIT
 EOM
 
-cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/tmp/v6rules" <<- EOM
+cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/iptables/rules.v6" <<- EOM
 *filter
 
 -A INPUT -j REJECT
@@ -115,8 +115,8 @@ EOM
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
 root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
 root:root 644 /lib/systemd/system/loxone-harmony-integration.service
-root:root 400 /tmp/v4rules
-root:root 400 /tmp/v6rules
+root:root 644 /etc/iptables/rules.v4
+root:root 644 /etc/iptables/rules.v6
 EOM
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
@@ -125,10 +125,10 @@ mkdir -p /etc/systemd/system/
 ln -s /lib/systemd/system/loxone-harmony-integration.service /etc/systemd/system/loxone-harmony-integration.service
 chroot /rootfs systemctl enable loxone-harmony-integration
 
-chroot /rootfs "iptables -F && iptables -X"
-chroot /rootfs "iptables-restore < /tmp/v4rules"
-chroot /rootfs "ip6tables-restore < /tmp/v6rules"
-chroot /rootfs "iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE"
+#chroot /rootfs "iptables -F && iptables -X"
+#chroot /rootfs "iptables-restore < /tmp/v4rules"
+#chroot /rootfs "ip6tables-restore < /tmp/v6rules"
+#chroot /rootfs "iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE"
 
 chroot /rootfs "echo "net.ipv4.ip_forward=1\n" >> /etc/sysctl.d/99-sysctl.conf"
 chroot /rootfs "echo "net.ipv6.conf.all.disable_ipv6 = 1\n" >> /etc/sysctl.d/99-sysctl.conf"
