@@ -133,16 +133,16 @@ mkdir -p /etc/systemd/system/
 ln -s /lib/systemd/system/loxone-harmony-integration.service /etc/systemd/system/loxone-harmony-integration.service
 chroot /rootfs systemctl enable loxone-harmony-integration
 
-#chroot /rootfs "iptables -F && iptables -X"
-#chroot /rootfs "iptables-restore < /tmp/v4rules"
-#chroot /rootfs "ip6tables-restore < /tmp/v6rules"
-#chroot /rootfs "iptables -t nat -A POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE"
+chroot /rootfs apt-get -y update
+echo "iptables-persistent iptables-persistent/autosave_v4 boolean true" | chroot /rootfs debconf-set-selections
+echo "iptables-persistent iptables-persistent/autosave_v6 boolean true" | chroot /rootfs debconf-set-selections
+chroot /rootfs apt-get -y install iptables-persistent
 
-chroot /rootfs "echo "net.ipv4.ip_forward=1\n" >> /etc/sysctl.d/99-sysctl.conf"
-chroot /rootfs "echo "net.ipv6.conf.all.disable_ipv6 = 1\n" >> /etc/sysctl.d/99-sysctl.conf"
-chroot /rootfs "echo "net.ipv6.conf.default.disable_ipv6 = 1\n" >> /etc/sysctl.d/99-sysctl.conf"
-chroot /rootfs "echo "net.ipv6.conf.lo.disable_ipv6 = 1\n" >> /etc/sysctl.d/99-sysctl.conf"
-chroot /rootfs "echo "net.ipv6.conf.eth0.disable_ipv6 = 1\n" >> /etc/sysctl.d/99-sysctl.conf"
+echo "net.ipv4.ip_forward=1\n" >> /rootfs/etc/sysctl.d/99-sysctl.conf
+echo "net.ipv6.conf.all.disable_ipv6 = 1\n" >> /rootfs/etc/sysctl.d/99-sysctl.conf
+echo "net.ipv6.conf.default.disable_ipv6 = 1\n" >> /rootfs/etc/sysctl.d/99-sysctl.conf
+echo "net.ipv6.conf.lo.disable_ipv6 = 1\n" >> /rootfs/etc/sysctl.d/99-sysctl.conf
+echo "net.ipv6.conf.eth0.disable_ipv6 = 1\n" >> /rootfs/etc/sysctl.d/99-sysctl.conf
 
 chroot /rootfs sysctl -p
 
