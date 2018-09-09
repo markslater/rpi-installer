@@ -84,10 +84,17 @@ COMMIT
 -A INPUT -i eth0 -p tcp -m state --state ESTABLISHED --sport 53 -j ACCEPT
 -A OUTPUT -o eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 53 -j ACCEPT
 
+# Allow outbound HTTP and HTTPS requests
 -A INPUT -i eth0 -p tcp -m state --state ESTABLISHED --sport 80 -j ACCEPT
 -A INPUT -i eth0 -p tcp -m state --state ESTABLISHED --sport 443 -j ACCEPT
 -A OUTPUT -o eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 80 -j ACCEPT
 -A OUTPUT -o eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 443 -j ACCEPT
+
+# Allow XMPP
+-A INPUT -i eth0 -p tcp -m state --state ESTABLISHED --dport 5222 -j ACCEPT
+-A INPUT -i eth0 -p tcp -m state --state ESTABLISHED --dport 5223 -j ACCEPT
+-A OUTPUT -i eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 5222 -j ACCEPT
+-A OUTPUT -i eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 5223 -j ACCEPT
 
 -A INPUT -i eth0 -p udp -m state --state ESTABLISHED --sport 123 -j ACCEPT
 -A OUTPUT -o eth0 -p udp -m state --state NEW,ESTABLISHED --dport 123 -j ACCEPT
