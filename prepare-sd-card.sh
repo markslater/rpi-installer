@@ -96,6 +96,10 @@ COMMIT
 -A OUTPUT -i eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 5222 -j ACCEPT
 -A OUTPUT -i eth0 -p tcp -m state --state NEW,ESTABLISHED --dport 5223 -j ACCEPT
 
+# Allow inbound HTTP requests to loxone-harmony-integration web server
+-A INPUT -i eth0 -p tcp -m state --state NEW,ESTABLISHED --sport 6789 -j ACCEPT
+-A OUTPUT -o eth0 -p tcp -m state --state ESTABLISHED --dport 6789 -j ACCEPT
+
 -A INPUT -i eth0 -p udp -m state --state ESTABLISHED --sport 123 -j ACCEPT
 -A OUTPUT -o eth0 -p udp -m state --state NEW,ESTABLISHED --dport 123 -j ACCEPT
 
