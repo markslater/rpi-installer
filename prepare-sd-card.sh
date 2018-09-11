@@ -103,6 +103,10 @@ COMMIT
 -A INPUT -i eth0 -p udp -m state --state ESTABLISHED --sport 123 -j ACCEPT
 -A OUTPUT -o eth0 -p udp -m state --state NEW,ESTABLISHED --dport 123 -j ACCEPT
 
+# Reject Plex UDP network discovery quietly
+-A INPUT -i eth0 -p udp --dport 32412 -j REJECT
+-A INPUT -i eth0 -p udp --dport 32414 -j REJECT
+
 -A INPUT -i tun0 -j ACCEPT
 -A FORWARD -i tun0 -j ACCEPT
 -A OUTPUT -o tun0 -j ACCEPT
