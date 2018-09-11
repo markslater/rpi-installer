@@ -159,6 +159,18 @@ chroot /rootfs sysctl -p
 
 chroot /rootfs adduser --system --no-create-home systemd-openvpn
 
+
+# certificates
+make-cadir /etc/openvpn/certs #??
+ln -s openssl-1.0.0.cnf openssl.cnf #??
+# set KEY_NAME in /etc/openvpn/certs/vars
+source /etc/openvpn/certs/vars #??
+/etc/openvpn/certs/clean-all #??
+/etc/openvpn/certs/build-ca
+/etc/openvpn/certs/build-key-server server
+openssl dhparam 2048 > /etc/openvpn/dh2048.pem
+openvpn --genkey --secret /etc/openvpn/certs/keys/ta.key
+
 EOM
 
 umount "${MOUNT_POINT}"
