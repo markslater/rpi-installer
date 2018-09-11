@@ -110,6 +110,10 @@ COMMIT
 # Reject SSDP quietly
 -A INPUT -i eth0 -p udp --dport 1900 -j REJECT
 
+# Reject NetBIOS quietly
+-A INPUT -i eth0 -p udp --dport 137 -j REJECT
+-A INPUT -i eth0 -p udp --dport 138 -j REJECT
+
 -A INPUT -i tun0 -j ACCEPT
 -A FORWARD -i tun0 -j ACCEPT
 -A OUTPUT -o tun0 -j ACCEPT
