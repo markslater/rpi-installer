@@ -161,15 +161,15 @@ chroot /rootfs adduser --system --no-create-home systemd-openvpn
 
 
 # certificates
-make-cadir /etc/openvpn/certs #??
-ln -s openssl-1.0.0.cnf openssl.cnf #??
-# set KEY_NAME in /etc/openvpn/certs/vars
-source /etc/openvpn/certs/vars #??
-/etc/openvpn/certs/clean-all #??
-/etc/openvpn/certs/build-ca
-/etc/openvpn/certs/build-key-server server
-openssl dhparam 2048 > /etc/openvpn/dh2048.pem
-openvpn --genkey --secret /etc/openvpn/certs/keys/ta.key
+chroot /rootfs mkdir -p /etc/openvpn/certs #?
+chroot /rootfs openssl req -days 3650 -nodes -new -x509 -keyout ca.key -out ca.crt -subj "/C=GB/ST=London/L=London/O=Private/CN=root.ca"
+chroot /rootfs openssl req -nodes -new -keyout server.key -out server.csr -subj "/C=GB/ST=London/L=London/O=Private/CN=server"
+chroot /rootfs openssl x509 -req -days 3650 -CA ca.crt -CAkey ca.key -CAcreateserial -in server.csr -out server.crt
+chroot /rootfs openssl dhparam 2048 -out dh2048.pem
+
+## TODO find somewhere better for the certificates
+## TODO chmods -- and chowns?
+chroot /rootfs openvpn --genkey --secret ta.key
 
 EOM
 
