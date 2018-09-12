@@ -171,6 +171,19 @@ chroot /rootfs sysctl -p
 
 chroot /rootfs adduser --system --no-create-home systemd-openvpn
 
+
+# certificates
+chroot /rootfs mkdir -p /etc/openvpn/certs #?
+chroot /rootfs openssl req -days 3650 -nodes -new -x509 -keyout ca.key -out ca.crt -subj "/C=GB/ST=London/L=London/O=Private/CN=root.ca"
+chroot /rootfs openssl req -nodes -new -keyout server.key -out server.csr -subj "/C=GB/ST=London/L=London/O=Private/CN=server"
+chroot /rootfs openssl x509 -req -days 3650 -CA ca.crt -CAkey ca.key -CAcreateserial -in server.csr -out server.crt
+chroot /rootfs openssl dhparam 2048 -out dh2048.pem
+chroot /rootfs openvpn --genkey --secret ta.key
+
+## TODO find somewhere better for the certificates
+## TODO chmods -- and chowns?
+## TODO generate certificates on host?
+
 EOM
 
 umount "${MOUNT_POINT}"
