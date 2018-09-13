@@ -150,6 +150,7 @@ root:root 644 /etc/iptables/rules.v4
 root:root 644 /etc/iptables/rules.v6
 EOM
 
+# TODO status log to /tmp to avoid chewing up SD card?
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server.conf" <<- EOM
 port 1194
 proto udp
@@ -157,7 +158,7 @@ dev tun
 ca /etc/openvpn/certs/ca.crt
 cert /etc/openvpn/certs/server.crt
 key /etc/openvpn/certs/server.key
-dh /etc/openvpn/certs/dh2048.pem
+dh /etc/openvpn/certs/dh2048.pem2
 
 server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist /var/tmp/openvpn/ipp.txt
