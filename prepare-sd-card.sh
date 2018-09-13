@@ -150,6 +150,31 @@ root:root 644 /etc/iptables/rules.v4
 root:root 644 /etc/iptables/rules.v6
 EOM
 
+cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server.conf" <<- EOM
+port 1194
+proto udp
+dev tun
+ca /etc/openvpn/certs/ca.crt
+cert /etc/openvpn/certs/server.crt
+key /etc/openvpn/certs/server.key
+dh /etc/openvpn/certs/dh2048.pem
+
+server 10.8.0.0 255.255.255.0
+ifconfig-pool-persist /var/tmp/openvpn/ipp.txt
+keepalive 10 120
+tls-auth /etc/openvpn/certs/ta.key 0
+cipher AES-256-CBC
+user systemd-openvpn
+group nogroup
+persist-key
+persist-tun
+status /var/log/openvpn-status.log
+verb 3
+explicit-exit-notify 1
+EOM
+
+# TODO pipe csr to signer?
+# TODO put server certs in the server directory??
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
 chroot /rootfs adduser --system --no-create-home systemd-loxone
 mkdir -p /etc/systemd/system/
@@ -171,14 +196,13 @@ chroot /rootfs sysctl -p
 
 chroot /rootfs adduser --system --no-create-home systemd-openvpn
 
-
 # certificates
-chroot /rootfs mkdir -p /etc/openvpn/certs #?
-chroot /rootfs openssl req -days 3650 -nodes -new -x509 -keyout ca.key -out ca.crt -subj "/C=GB/ST=London/L=London/O=Private/CN=root.ca"
-chroot /rootfs openssl req -nodes -new -keyout server.key -out server.csr -subj "/C=GB/ST=London/L=London/O=Private/CN=server"
-chroot /rootfs openssl x509 -req -days 3650 -CA ca.crt -CAkey ca.key -CAcreateserial -in server.csr -out server.crt
-chroot /rootfs openssl dhparam 2048 -out dh2048.pem
-chroot /rootfs openvpn --genkey --secret ta.key
+chroot /rootfs mkdir -p /etc/openvpn/certs
+chroot /rootfs openssl req -days 3650 -nodes -new -x509 -keyout /etc/openvpn/certs/ca.key -out /etc/openvpn/certs/ca.crt -subj "/C=GB/ST=London/L=London/O=Private/CN=root.ca"
+chroot /rootfs openssl req -nodes -new -keyout /etc/openvpn/certs/server.key -out /etc/openvpn/certs/server.csr -subj "/C=GB/ST=London/L=London/O=Private/CN=server"
+chroot /rootfs openssl x509 -req -days 3650 -CA /etc/openvpn/certs/ca.crt -CAkey /etc/openvpn/certs/ca.key -CAcreateserial -in /etc/openvpn/certs/server.csr -out /etc/openvpn/certs/server.crt
+chroot /rootfs openssl dhparam 2048 -out /etc/openvpn/certs/dh2048.pem
+chroot /rootfs openvpn --genkey --secret /etc/openvpn/certs/ta.key
 
 ## TODO find somewhere better for the certificates
 ## TODO chmods -- and chowns?
