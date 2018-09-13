@@ -161,7 +161,7 @@ dev tun
 ca /etc/openvpn/certs/ca.crt
 cert /etc/openvpn/certs/server.crt
 key /etc/openvpn/certs/server.key
-dh /etc/openvpn/certs/dh2048.pem2
+dh /etc/openvpn/certs/dh2048.pem
 
 server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist /var/tmp/openvpn/ipp.txt
