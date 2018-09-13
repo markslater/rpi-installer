@@ -151,6 +151,7 @@ root:root 644 /etc/iptables/rules.v6
 EOM
 
 # TODO status log to /tmp to avoid chewing up SD card?
+mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server.conf" <<- EOM
 port 1194
 proto udp
