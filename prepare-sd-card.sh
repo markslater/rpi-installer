@@ -143,11 +143,13 @@ cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/iptables/rule
 COMMIT
 EOM
 
+# TODO do these files actually need to be writeable?
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
 root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
 root:root 644 /lib/systemd/system/loxone-harmony-integration.service
 root:root 644 /etc/iptables/rules.v4
 root:root 644 /etc/iptables/rules.v6
+root:root 644 /etc/openvpn/server.conf
 EOM
 
 # TODO status log to /tmp to avoid chewing up SD card?
