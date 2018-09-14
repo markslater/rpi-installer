@@ -143,6 +143,17 @@ cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/iptables/rule
 COMMIT
 EOM
 
+# TODO tidy up location of ca.key and client config
+mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs"
+openssl req -days 3650 -nodes -new -x509 -keyout ./ca.key -out ./ca.crt -subj "/C=GB/ST=London/L=London/O=Private/CN=root.ca"
+cp ./ca.crt "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/ca.crt"
+openssl req -nodes -new -keyout "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/server.key" -subj "/C=GB/ST=London/L=London/O=Private/CN=server" | openssl x509 -req -days 3650 -CA /etc/openvpn/certs/ca.crt -CAkey "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/ca.key" -CAcreateserial -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/server.crt"
+openssl dhparam -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/dh2048.pem" 2048
+openvpn --genkey --secret ./ta.key
+cp ./ta.key "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/ta.key"
+
+openssl req -nodes -new -keyout ./client.key -subj "/C=GB/ST=London/L=London/O=Private/CN=client" | openssl x509 -req -days 3650 -CA ./ca.crt -CAkey ./ca.key -CAcreateserial -out ./client.crt
+
 # TODO do these files actually need to be writeable?
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
 root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
@@ -150,6 +161,11 @@ root:root 644 /lib/systemd/system/loxone-harmony-integration.service
 root:root 644 /etc/iptables/rules.v4
 root:root 644 /etc/iptables/rules.v6
 root:root 644 /etc/openvpn/server.conf
+root:root 644 /etc/openvpn/certs/ca.crt
+root:root 644 /etc/openvpn/certs/server.crt
+root:root 600 /etc/openvpn/certs/server.key
+root:root 644 /etc/openvpn/certs/dh2048.pem
+root:root 600 /etc/openvpn/certs/ta.key
 EOM
 
 # TODO status log to /tmp to avoid chewing up SD card?
@@ -202,19 +218,8 @@ echo "net.ipv6.conf.lo.disable_ipv6 = 1" >> /rootfs/etc/sysctl.d/99-sysctl.conf
 echo "net.ipv6.conf.eth0.disable_ipv6 = 1" >> /rootfs/etc/sysctl.d/99-sysctl.conf
 
 chroot /rootfs sysctl -p
-
 chroot /rootfs adduser --system --no-create-home systemd-openvpn
-
 chroot /rootfs mkdir -p mkdir -p /var/tmp/openvpn/
-# certificates
-chroot /rootfs mkdir -p /etc/openvpn/certs
-chroot /rootfs openssl req -days 3650 -nodes -new -x509 -keyout /etc/openvpn/certs/ca.key -out /etc/openvpn/certs/ca.crt -subj "/C=GB/ST=London/L=London/O=Private/CN=root.ca"
-chroot /rootfs openssl req -nodes -new -keyout /etc/openvpn/certs/server.key -subj "/C=GB/ST=London/L=London/O=Private/CN=server" | chroot /rootfs openssl x509 -req -days 3650 -CA /etc/openvpn/certs/ca.crt -CAkey /etc/openvpn/certs/ca.key -CAcreateserial -out /etc/openvpn/certs/server.crt
-chroot /rootfs openssl dhparam -out /etc/openvpn/certs/dh2048.pem 2048
-chroot /rootfs openvpn --genkey --secret /etc/openvpn/certs/ta.key
-
-chroot /rootfs openssl req -nodes -new -keyout /etc/openvpn/certs/client.key -subj "/C=GB/ST=London/L=London/O=Private/CN=client" | chroot /rootfs openssl x509 -req -days 3650 -CA /etc/openvpn/certs/ca.crt -CAkey /etc/openvpn/certs/ca.key -CAcreateserial -out /etc/openvpn/certs/client.crt
-
 chroot /rootfs systemctl enable openvpn@server
 EOM
 
