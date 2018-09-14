@@ -154,6 +154,7 @@ EOM
 
 # TODO status log to /tmp to avoid chewing up SD card?
 # TODO limit ciphers
+# TODO Note: cannot open /var/tmp/openvpn/ipp.txt for READ/WRITE
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server.conf" <<- EOM
 port 1194
