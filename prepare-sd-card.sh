@@ -177,8 +177,8 @@ verb 3
 explicit-exit-notify 1
 EOM
 
-# TODO pipe csr to signer?
 # TODO put server certs in the server directory??
+# TODO generate certificates on host?
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
 chroot /rootfs adduser --system --no-create-home systemd-loxone
 mkdir -p /etc/systemd/system/
@@ -209,11 +209,6 @@ chroot /rootfs openssl dhparam -out /etc/openvpn/certs/dh2048.pem 2048
 chroot /rootfs openvpn --genkey --secret /etc/openvpn/certs/ta.key
 
 chroot /rootfs systemctl enable openvpn@server
-
-## TODO find somewhere better for the certificates
-## TODO chmods -- and chowns?
-## TODO generate certificates on host?
-
 EOM
 
 umount "${MOUNT_POINT}"
