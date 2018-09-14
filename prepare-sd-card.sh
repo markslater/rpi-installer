@@ -176,6 +176,9 @@ persist-tun
 status /var/log/openvpn-status.log
 verb 3
 explicit-exit-notify 1
+push "redirect-gateway def1 bypass-dhcp"
+push "dhcp-option DNS 208.67.222.222"
+push "dhcp-option DNS 208.67.220.220"
 EOM
 
 # TODO put server certs in the server directory??
@@ -208,6 +211,8 @@ chroot /rootfs openssl req -days 3650 -nodes -new -x509 -keyout /etc/openvpn/cer
 chroot /rootfs openssl req -nodes -new -keyout /etc/openvpn/certs/server.key -subj "/C=GB/ST=London/L=London/O=Private/CN=server" | chroot /rootfs openssl x509 -req -days 3650 -CA /etc/openvpn/certs/ca.crt -CAkey /etc/openvpn/certs/ca.key -CAcreateserial -out /etc/openvpn/certs/server.crt
 chroot /rootfs openssl dhparam -out /etc/openvpn/certs/dh2048.pem 2048
 chroot /rootfs openvpn --genkey --secret /etc/openvpn/certs/ta.key
+
+chroot /rootfs openssl req -nodes -new -keyout /etc/openvpn/certs/client.key -subj "/C=GB/ST=London/L=London/O=Private/CN=client" | chroot /rootfs openssl x509 -req -days 3650 -CA /etc/openvpn/certs/ca.crt -CAkey /etc/openvpn/certs/ca.key -CAcreateserial -out /etc/openvpn/certs/client.crt
 
 chroot /rootfs systemctl enable openvpn@server
 EOM
