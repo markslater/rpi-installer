@@ -199,7 +199,6 @@ push "dhcp-option DNS 208.67.220.220"
 EOM
 
 # TODO put server certs in the server directory??
-# TODO generate certificates on host?
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
 chroot /rootfs adduser --system --no-create-home systemd-loxone
 mkdir -p /etc/systemd/system/
