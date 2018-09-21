@@ -1,14 +1,19 @@
 #!/usr/bin/env bash
+set -e
 
-if [[ $# -ne 2 ]]
+if [[ $# -ne 5 ]]
     then
-        echo "Usage ${0} unique-client-name public-ip"
-        echo "e.g. ${0} alice 208.67.222.222"
+        echo "Usage ${0} ca.key ca.crt ta.key public-ip unique-client-name"
+        echo "e.g. ${0} ca.key ca.crt ta.key 208.67.222.222 alice"
         exit 1
 fi
 
-CLIENT_CN="${1}"
-PUBLIC_IP_ADDRESS="${2}"
+
+CA_KEY="${1}"
+CA_CERT="${2}"
+TA_KEY="${3}"
+PUBLIC_IP_ADDRESS="${4}"
+CLIENT_CN="${5}"
 
 cat > "./${CLIENT_CN}.ovpn" <<- EOM
 client
@@ -50,12 +55,12 @@ verb 3
 mute 20
 
 <ca>
-$(cat ./ca.crt)
+$(cat "${CA_CERT}")
 </ca>
 <key>
 EOM
 
-CLIENT_CERTIFICATE=`openssl req -nodes -new -keyout >(cat >> "./${CLIENT_CN}.ovpn") -subj "/C=GB/ST=London/L=London/O=Private/CN=client" | openssl x509 -req -days 3650 -CA ./ca.crt -CAkey ./ca.key -CAcreateserial`
+CLIENT_CERTIFICATE=`openssl req -nodes -new -keyout >(cat >> "./${CLIENT_CN}.ovpn") -subj "/C=GB/ST=London/L=London/O=Private/CN=client" | openssl x509 -req -days 3650 -CA "${CA_CERT}" -CAkey "${CA_KEY}" -CAcreateserial`
 
 cat >> "./${CLIENT_CN}.ovpn" <<- EOM
 </key>
@@ -63,6 +68,6 @@ cat >> "./${CLIENT_CN}.ovpn" <<- EOM
 ${CLIENT_CERTIFICATE}
 </cert>
 <tls-auth>
-$(cat ./ta.key)
+$(cat "${TA_KEY}")
 </tls-auth>
 EOM

@@ -1,18 +1,24 @@
 #!/usr/bin/env bash
+set -e
 
-if [[ $# -ne 3 ]]
+if [[ $# -ne 6 ]]
     then
-        echo "Usage ${0} sdCard path-to-loxone-harmony-integration.jar path-to-ssh-public-key"
-        echo "e.g. ${0} /dev/mmcblk0 ./loxone-harmony-integration-all.jar ~alice/.ssh/id_rsa.pub"
+        echo "Usage ${0} sdCard path-to-loxone-harmony-integration.jar path-to-ssh-public-key openvpn-ca.key openvpn-ca.crt openvpn-ta.key"
+        echo "e.g. ${0} /dev/mmcblk0 ./loxone-harmony-integration-all.jar ~alice/.ssh/id_rsa.pub ca.key ca.crt ta.key"
         exit 1
 fi
 
+DEVICE_NAME="${1}"
+JAR_PATH="${2}"
 JAR_NAME=`basename "${2}"`
 PUBLIC_KEY=`cat "${3}"`
+CA_KEY="${4}"
+CA_CERT="${5}"
+TA_KEY="${6}"
+
 
 # TODO unmount sd card first?
-
-wget -qO- https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v2.1.0/raspberrypi-ua-netinst-v2.1.0.img.xz | xzcat - > ${1}
+wget -qO- https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v2.1.0/raspberrypi-ua-netinst-v2.1.0.img.xz | xzcat - > "${DEVICE_NAME}"
 
 MOUNT_POINT=`mktemp --directory`
 
@@ -36,7 +42,7 @@ system_default_locale="en_GB.UTF-8"
 EOM
 
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
-cp "${2}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
+cp "${JAR_PATH}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/opt/loxone-harmony-integration/"
 
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/lib/systemd/system/loxone-harmony-integration.service" <<- EOM
@@ -143,16 +149,11 @@ cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/iptables/rule
 COMMIT
 EOM
 
-# TODO tidy up location of ca.key and client config
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs"
-openssl req -days 3650 -nodes -new -x509 -keyout ./ca.key -out ./ca.crt -subj "/C=GB/ST=London/L=London/O=Private/CN=root.ca"
-cp ./ca.crt "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/ca.crt"
-openssl req -nodes -new -keyout "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/server.key" -subj "/C=GB/ST=London/L=London/O=Private/CN=server" | openssl x509 -req -days 3650 -CA ./ca.crt -CAkey ./ca.key -CAcreateserial -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/server.crt"
+cp "${CA_CERT}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/ca.crt"
+openssl req -nodes -new -keyout "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/server.key" -subj "/C=GB/ST=London/L=London/O=Private/CN=server" | openssl x509 -req -days 3650 -CA "${CA_CERT}" -CAkey "${CA_KEY}" -CAcreateserial -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/server.crt"
 openssl dhparam -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/dh2048.pem" 2048
-openvpn --genkey --secret ./ta.key
-cp ./ta.key "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/ta.key"
-
-openssl req -nodes -new -keyout ./client.key -subj "/C=GB/ST=London/L=London/O=Private/CN=client" | openssl x509 -req -days 3650 -CA ./ca.crt -CAkey ./ca.key -CAcreateserial -out ./client.crt
+cp "${TA_KEY}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/ta.key"
 
 # TODO do these files actually need to be writeable?
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
