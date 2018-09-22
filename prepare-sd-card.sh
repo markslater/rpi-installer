@@ -170,7 +170,6 @@ EOM
 
 # TODO status log to /tmp to avoid chewing up SD card?
 # TODO limit ciphers
-# TODO Note: cannot open /var/tmp/openvpn/ipp.txt for READ/WRITE
 # TODO review port forarding rules on router
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server.conf" <<- EOM
@@ -183,7 +182,7 @@ key /etc/openvpn/server/server.key
 dh /etc/openvpn/server/dh2048.pem
 
 server 10.8.0.0 255.255.255.0
-ifconfig-pool-persist /var/tmp/openvpn/ipp.txt
+ifconfig-pool-persist ipp.txt
 keepalive 10 120
 tls-auth /etc/openvpn/server/ta.key 0
 cipher AES-256-CBC
