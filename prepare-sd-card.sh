@@ -155,18 +155,17 @@ openssl req -nodes -new -keyout "${MOUNT_POINT}/raspberrypi-ua-netinst/config/fi
 openssl dhparam -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/dh2048.pem" 2048
 cp "${TA_KEY}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/ta.key"
 
-# TODO do these files actually need to be writeable?
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
 root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
-root:root 644 /lib/systemd/system/loxone-harmony-integration.service
-root:root 644 /etc/iptables/rules.v4
-root:root 644 /etc/iptables/rules.v6
-root:root 644 /etc/openvpn/server.conf
-root:root 644 /etc/openvpn/certs/ca.crt
-root:root 644 /etc/openvpn/certs/server.crt
-root:root 600 /etc/openvpn/certs/server.key
-root:root 644 /etc/openvpn/certs/dh2048.pem
-root:root 600 /etc/openvpn/certs/ta.key
+root:root 444 /lib/systemd/system/loxone-harmony-integration.service
+root:root 444 /etc/iptables/rules.v4
+root:root 444 /etc/iptables/rules.v6
+root:root 444 /etc/openvpn/server.conf
+root:root 444 /etc/openvpn/certs/ca.crt
+root:root 444 /etc/openvpn/certs/server.crt
+root:root 400 /etc/openvpn/certs/server.key
+root:root 444 /etc/openvpn/certs/dh2048.pem
+root:root 400 /etc/openvpn/certs/ta.key
 EOM
 
 # TODO status log to /tmp to avoid chewing up SD card?
