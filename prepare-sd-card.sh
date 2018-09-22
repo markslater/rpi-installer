@@ -149,11 +149,11 @@ cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/iptables/rule
 COMMIT
 EOM
 
-mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs"
-cp "${CA_CERT}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/ca.crt"
-openssl req -nodes -new -keyout "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/server.key" -subj "/C=GB/ST=London/L=London/O=Private/CN=server" | openssl x509 -req -days 3650 -CA "${CA_CERT}" -CAkey "${CA_KEY}" -CAcreateserial -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/server.crt"
-openssl dhparam -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/dh2048.pem" 2048
-cp "${TA_KEY}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/certs/ta.key"
+mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server"
+cp "${CA_CERT}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server/ca.crt"
+openssl req -nodes -new -keyout "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server/server.key" -subj "/C=GB/ST=London/L=London/O=Private/CN=server" | openssl x509 -req -days 3650 -CA "${CA_CERT}" -CAkey "${CA_KEY}" -CAcreateserial -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server/server.crt"
+openssl dhparam -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server/dh2048.pem" 2048
+cp "${TA_KEY}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server/ta.key"
 
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/systemd.list" <<- EOM
 root:root 444 /opt/loxone-harmony-integration/${JAR_NAME}
@@ -161,11 +161,11 @@ root:root 444 /lib/systemd/system/loxone-harmony-integration.service
 root:root 444 /etc/iptables/rules.v4
 root:root 444 /etc/iptables/rules.v6
 root:root 444 /etc/openvpn/server.conf
-root:root 444 /etc/openvpn/certs/ca.crt
-root:root 444 /etc/openvpn/certs/server.crt
-root:root 400 /etc/openvpn/certs/server.key
-root:root 444 /etc/openvpn/certs/dh2048.pem
-root:root 400 /etc/openvpn/certs/ta.key
+root:root 444 /etc/openvpn/server/ca.crt
+root:root 444 /etc/openvpn/server/server.crt
+root:root 400 /etc/openvpn/server/server.key
+root:root 444 /etc/openvpn/server/dh2048.pem
+root:root 400 /etc/openvpn/server/ta.key
 EOM
 
 # TODO status log to /tmp to avoid chewing up SD card?
@@ -177,15 +177,15 @@ cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/serve
 port 1194
 proto udp
 dev tun
-ca /etc/openvpn/certs/ca.crt
-cert /etc/openvpn/certs/server.crt
-key /etc/openvpn/certs/server.key
-dh /etc/openvpn/certs/dh2048.pem
+ca /etc/openvpn/server/ca.crt
+cert /etc/openvpn/server/server.crt
+key /etc/openvpn/server/server.key
+dh /etc/openvpn/server/dh2048.pem
 
 server 10.8.0.0 255.255.255.0
 ifconfig-pool-persist /var/tmp/openvpn/ipp.txt
 keepalive 10 120
-tls-auth /etc/openvpn/certs/ta.key 0
+tls-auth /etc/openvpn/server/ta.key 0
 cipher AES-256-CBC
 user systemd-openvpn
 group nogroup
@@ -199,7 +199,6 @@ push "dhcp-option DNS 208.67.222.222"
 push "dhcp-option DNS 208.67.220.220"
 EOM
 
-# TODO put server certs in the server directory??
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/post-install.txt" <<- EOM
 chroot /rootfs adduser --system --no-create-home systemd-loxone
 mkdir -p /etc/systemd/system/
