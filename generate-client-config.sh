@@ -60,7 +60,7 @@ $(cat "${CA_CERT}")
 <key>
 EOM
 
-CLIENT_CERTIFICATE=`openssl req -nodes -new -keyout >(cat >> "./${CLIENT_CN}.ovpn") -subj "/C=GB/ST=London/L=London/O=Private/CN=client" | openssl x509 -req -days 3650 -CA "${CA_CERT}" -CAkey "${CA_KEY}" -CAcreateserial`
+CLIENT_CERTIFICATE=`openssl req -nodes -new -keyout >(cat >> "./${CLIENT_CN}.ovpn") -subj "/C=GB/ST=London/L=London/O=Private/CN=${CLIENT_CN}" | openssl x509 -req -days 3650 -CA "${CA_CERT}" -CAkey "${CA_KEY}" -CAcreateserial`
 
 cat >> "./${CLIENT_CN}.ovpn" <<- EOM
 </key>
