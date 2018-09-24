@@ -184,6 +184,7 @@ ifconfig-pool-persist ipp.txt
 keepalive 10 120
 tls-auth /etc/openvpn/server/ta.key 0
 cipher AES-256-CBC
+auth SHA512
 tls-cipher TLS-DHE-RSA-WITH-AES-256-GCM-SHA384:TLS-DHE-RSA-WITH-AES-128-GCM-SHA256:TLS-DHE-RSA-WITH-AES-256-CBC-SHA:TLS-DHE-RSA-WITH-CAMELLIA-256-CBC-SHA:TLS-DHE-RSA-WITH-AES-128-CBC-SHA:TLS-DHE-RSA-WITH-CAMELLIA-128-CBC-SHA
 user systemd-openvpn
 group nogroup
