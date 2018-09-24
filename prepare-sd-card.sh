@@ -170,7 +170,6 @@ EOM
 
 # TODO status log to /tmp to avoid chewing up SD card?
 # TODO limit ciphers
-# TODO review port forarding rules on router
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server.conf" <<- EOM
 port 1194
