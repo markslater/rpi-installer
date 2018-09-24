@@ -174,6 +174,7 @@ EOM
 
 # TODO status log to /tmp to avoid chewing up SD card?
 # TODO make client config require remote certificate to be a server certificate
+# TODO get auth digest working
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server.conf" <<- EOM
 port 1194
