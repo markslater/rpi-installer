@@ -169,7 +169,6 @@ root:root 400 /etc/openvpn/server/ta.key
 EOM
 
 # TODO status log to /tmp to avoid chewing up SD card?
-# TODO limit ciphers
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server.conf" <<- EOM
 port 1194
@@ -185,6 +184,7 @@ ifconfig-pool-persist ipp.txt
 keepalive 10 120
 tls-auth /etc/openvpn/server/ta.key 0
 cipher AES-256-CBC
+tls-cipher TLS-DHE-RSA-WITH-AES-256-GCM-SHA384:TLS-DHE-RSA-WITH-AES-128-GCM-SHA256:TLS-DHE-RSA-WITH-AES-256-CBC-SHA:TLS-DHE-RSA-WITH-CAMELLIA-256-CBC-SHA:TLS-DHE-RSA-WITH-AES-128-CBC-SHA:TLS-DHE-RSA-WITH-CAMELLIA-128-CBC-SHA
 user systemd-openvpn
 group nogroup
 persist-key
