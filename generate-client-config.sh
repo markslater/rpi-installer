@@ -51,6 +51,7 @@ persist-tun
 
 key-direction 1
 cipher AES-256-CBC
+auth SHA512
 verb 3
 mute 20
 
