@@ -195,7 +195,7 @@ user systemd-openvpn
 group nogroup
 persist-key
 persist-tun
-status /var/log/openvpn-status.log
+status /run/log/openvpn-status.log
 verb 3
 explicit-exit-notify 1
 push "redirect-gateway def1 bypass-dhcp"
