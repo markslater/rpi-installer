@@ -18,7 +18,6 @@ TA_KEY="${6}"
 
 
 # TODO disable root login
-# TODO try latest installer again?
 parted --script "${DEVICE_NAME}" mklabel msdos
 parted --script --align optimal "${DEVICE_NAME}" mkpart primary fat32 0% 100%
 parted --script "${DEVICE_NAME}" set 1 boot on
@@ -172,7 +171,6 @@ root:root 444 /etc/openvpn/server/dh2048.pem
 root:root 400 /etc/openvpn/server/ta.key
 EOM
 
-# TODO status log to /tmp to avoid chewing up SD card?
 # TODO make client config require remote certificate to be a server certificate
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server.conf" <<- EOM
