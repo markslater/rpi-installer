@@ -61,7 +61,14 @@ $(cat "${CA_CERT}")
 <key>
 EOM
 
-CLIENT_CERTIFICATE=`openssl req -nodes -new -keyout >(cat >> "./${CLIENT_CN}.ovpn") -subj "/C=GB/ST=London/L=London/O=Private/CN=${CLIENT_CN}" | openssl x509 -req -days 3650 -CA "${CA_CERT}" -CAkey "${CA_KEY}" -CAcreateserial`
+CLIENT_CERTIFICATE=`openssl req -nodes -new -keyout >(cat >> "./${CLIENT_CN}.ovpn") -subj "/C=GB/ST=London/L=London/O=Private/CN=${CLIENT_CN}" | openssl x509 -req -days 3650 -CA "${CA_CERT}" -CAkey "${CA_KEY}" -CAcreateserial -extfile <(cat <<- EOM
+basicConstraints = CA:FALSE
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer:always
+extendedKeyUsage = clientAuth
+keyUsage = digitalSignature
+EOM
+)`
 
 cat >> "./${CLIENT_CN}.ovpn" <<- EOM
 </key>

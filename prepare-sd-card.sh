@@ -154,7 +154,14 @@ EOM
 
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server"
 cp "${CA_CERT}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server/ca.crt"
-openssl req -nodes -new -keyout "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server/server.key" -subj "/C=GB/ST=London/L=London/O=Private/CN=server" | openssl x509 -req -days 3650 -CA "${CA_CERT}" -CAkey "${CA_KEY}" -CAcreateserial -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server/server.crt"
+openssl req -nodes -new -keyout "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server/server.key" -subj "/C=GB/ST=London/L=London/O=Private/CN=server" | openssl x509 -req -days 3650 -CA "${CA_CERT}" -CAkey "${CA_KEY}" -CAcreateserial -extfile <(cat <<- EOM
+basicConstraints = CA:FALSE
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer:always
+extendedKeyUsage = serverAuth
+keyUsage = digitalSignature,keyEncipherment
+EOM
+) -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server/server.crt"
 openssl dhparam -out "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server/dh2048.pem" 2048
 cp "${TA_KEY}" "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server/ta.key"
 
