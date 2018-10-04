@@ -35,19 +35,7 @@ persist-tun
 # to silence duplicate packet warnings.
 ;mute-replay-warnings
 
-# Verify server certificate by checking that the
-# certicate has the correct key usage set.
-# This is an important precaution to protect against
-# a potential attack discussed here:
-#  http://openvpn.net/howto.html#mitm
-#
-# To use this feature, you will need to generate
-# your server certificates with the keyUsage set to
-#   digitalSignature, keyEncipherment
-# and the extendedKeyUsage to
-#   serverAuth
-# EasyRSA can do this for you.
-# remote-cert-tls server
+remote-cert-tls server
 
 key-direction 1
 cipher AES-256-CBC
