@@ -178,7 +178,6 @@ root:root 444 /etc/openvpn/server/dh2048.pem
 root:root 400 /etc/openvpn/server/ta.key
 EOM
 
-# TODO make client config require remote certificate to be a server certificate
 mkdir -p "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/files/root/etc/openvpn/server.conf" <<- EOM
 port 1194
