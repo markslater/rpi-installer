@@ -30,10 +30,13 @@ mount -t vfat /dev/mmcblk0p1 "${MOUNT_POINT}"
 cat > "${MOUNT_POINT}/raspberrypi-ua-netinst/config/installer-config.txt" <<- EOM
 packages="openjdk-8-jre,iptables,openvpn"
 
+root_ssh_pubkey=""
+root_ssh_pwlogin=0
+rootpw=
+
 username=pi
 usersysgroups="systemd-journal"
 user_ssh_pubkey="${PUBLIC_KEY}"
-root_ssh_pwlogin=0
 ssh_pwlogin=0
 
 hostname=pi
