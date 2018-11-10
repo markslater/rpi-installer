@@ -17,7 +17,6 @@ CA_CERT="${5}"
 TA_KEY="${6}"
 
 
-# TODO disable root login
 parted --script "${DEVICE_NAME}" mklabel msdos
 parted --script --align optimal "${DEVICE_NAME}" mkpart primary fat32 0% 100%
 parted --script "${DEVICE_NAME}" set 1 boot on
