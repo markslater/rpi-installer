@@ -20,7 +20,7 @@ TA_KEY="${6}"
 parted --script "${DEVICE_NAME}" mklabel msdos
 parted --script --align optimal "${DEVICE_NAME}" mkpart primary fat32 0% 100%
 parted --script "${DEVICE_NAME}" set 1 boot on
-wget -qO- https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v2.2.2/raspberrypi-ua-netinst-v2.2.2.img.xz | xzcat - > "${DEVICE_NAME}"
+wget -qO- https://github.com/FooDeas/raspberrypi-ua-netinst/releases/download/v2.4.0_caf7423/raspberrypi-ua-netinst-git-caf7423.img.xz | xzcat - > "${DEVICE_NAME}"
 
 MOUNT_POINT=`mktemp --directory`
 
